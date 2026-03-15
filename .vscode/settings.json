@@ -1,3 +1,6 @@
 {
-    "cmake.ignoreCMakeListsMissing": true
+    "cmake.ignoreCMakeListsMissing": true,
+    "yaml.schemas": {
+        "https://www.schemastore.org/pubspec.json": "file:///Users/prustysrujal2003/Desktop/Flutter%20Resume%20Project/blood_bridge/pubspec.yaml"
+    }
 }

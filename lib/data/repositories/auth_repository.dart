@@ -19,22 +19,28 @@ class AuthRepository {
     required Function(String error) onError,
   }) async {
     try {
+      print('🔥 Firebase verifyPhoneNumber called with: $phoneNumber');
       await _auth.verifyPhoneNumber(
         phoneNumber: phoneNumber,
         timeout: const Duration(seconds: 60),
         verificationCompleted: (PhoneAuthCredential credential) async {
-          // Auto-verification on Android
+          print('✅ Auto verification completed');
           await _auth.signInWithCredential(credential);
         },
         verificationFailed: (FirebaseAuthException e) {
+          print('❌ Verification failed: ${e.code} — ${e.message}');
           onError(e.message ?? 'Verification failed');
         },
         codeSent: (String verificationId, int? resendToken) {
+          print('📨 Code sent! verificationId: $verificationId');
           onCodeSent(verificationId);
         },
-        codeAutoRetrievalTimeout: (String verificationId) {},
+        codeAutoRetrievalTimeout: (String verificationId) {
+          print('⏰ Auto retrieval timeout');
+        },
       );
     } catch (e) {
+      print('💥 Exception: $e');
       onError(e.toString());
     }
   }

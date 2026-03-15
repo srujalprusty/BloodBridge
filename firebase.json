@@ -1,1 +1,41 @@
-{"flutter":{"platforms":{"android":{"default":{"projectId":"bloodbridge-bb5ce","appId":"1:72152169100:android:1d5ad7863abfdd1b7659a9","fileOutput":"android/app/google-services.json"}},"ios":{"default":{"projectId":"bloodbridge-bb5ce","appId":"1:72152169100:ios:054b6794397671f47659a9","uploadDebugSymbols":false,"fileOutput":"ios/Runner/GoogleService-Info.plist"}},"macos":{"default":{"projectId":"bloodbridge-bb5ce","appId":"1:72152169100:ios:054b6794397671f47659a9","uploadDebugSymbols":false,"fileOutput":"macos/Runner/GoogleService-Info.plist"}},"dart":{"lib/firebase_options.dart":{"projectId":"bloodbridge-bb5ce","configurations":{"android":"1:72152169100:android:1d5ad7863abfdd1b7659a9","ios":"1:72152169100:ios:054b6794397671f47659a9","macos":"1:72152169100:ios:054b6794397671f47659a9","web":"1:72152169100:web:4204f4453174af997659a9","windows":"1:72152169100:web:85622617bae7c3907659a9"}}}}}}
+{
+  "flutter": {
+    "platforms": {
+      "android": {
+        "default": {
+          "projectId": "bloodbridge-bb5ce",
+          "appId": "1:72152169100:android:1d5ad7863abfdd1b7659a9",
+          "fileOutput": "android/app/google-services.json"
+        }
+      },
+      "ios": {
+        "default": {
+          "projectId": "bloodbridge-bb5ce",
+          "appId": "1:72152169100:ios:054b6794397671f47659a9",
+          "uploadDebugSymbols": false,
+          "fileOutput": "ios/Runner/GoogleService-Info.plist"
+        }
+      },
+      "macos": {
+        "default": {
+          "projectId": "bloodbridge-bb5ce",
+          "appId": "1:72152169100:ios:054b6794397671f47659a9",
+          "uploadDebugSymbols": false,
+          "fileOutput": "macos/Runner/GoogleService-Info.plist"
+        }
+      },
+      "dart": {
+        "lib/firebase_options.dart": {
+          "projectId": "bloodbridge-bb5ce",
+          "configurations": {
+            "android": "1:72152169100:android:1d5ad7863abfdd1b7659a9",
+            "ios": "1:72152169100:ios:054b6794397671f47659a9",
+            "macos": "1:72152169100:ios:054b6794397671f47659a9",
+            "web": "1:72152169100:web:4204f4453174af997659a9",
+            "windows": "1:72152169100:web:85622617bae7c3907659a9"
+          }
+        }
+      }
+    }
+  }
+}

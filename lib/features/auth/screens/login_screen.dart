@@ -3,7 +3,6 @@ import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import '../providers/auth_provider.dart';
 import '../../../core/constants/app_colors.dart';
-import '../../../core/constants/app_strings.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -22,6 +21,8 @@ class _LoginScreenState extends State<LoginScreen>
   @override
   void initState() {
     super.initState();
+
+    // Animation setup
     _animController = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 700),
@@ -31,48 +32,75 @@ class _LoginScreenState extends State<LoginScreen>
       end: Offset.zero,
     ).animate(CurvedAnimation(parent: _animController, curve: Curves.easeOut));
     _animController.forward();
+
+    // Listen to auth status changes AFTER first frame
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      context.read<AuthProvider>().addListener(_onAuthStatusChanged);
+    });
   }
 
-  @override
-  void dispose() {
-    _phoneController.dispose();
-    _animController.dispose();
-    super.dispose();
-  }
-
-  String? _validatePhone(String? value) {
-    if (value == null || value.isEmpty) return AppStrings.phoneRequired;
-    final digits = value.replaceAll(RegExp(r'\D'), '');
-    if (digits.length < 10) return AppStrings.invalidPhone;
-    return null;
-  }
-
-  Future<void> _sendOTP() async {
-    if (!_formKey.currentState!.validate()) return;
-    FocusScope.of(context).unfocus();
-
-    final raw = _phoneController.text.replaceAll(RegExp(r'\D'), '');
-    final phone = '+91$raw';
-
-    await context.read<AuthProvider>().sendOTP(phone);
-
+  void _onAuthStatusChanged() {
     if (!mounted) return;
     final auth = context.read<AuthProvider>();
+    print('🔔 Login screen - Status changed: ${auth.status}');
+
     if (auth.status == AuthStatus.otpSent) {
       Navigator.pushNamed(context, '/otp');
+    } else if (auth.status == AuthStatus.authenticated) {
+      Navigator.pushNamedAndRemoveUntil(context, '/home', (route) => false);
+    } else if (auth.status == AuthStatus.profileIncomplete) {
+      Navigator.pushNamedAndRemoveUntil(
+          context, '/complete-profile', (route) => false);
     } else if (auth.status == AuthStatus.error) {
       _showError(auth.errorMessage);
       auth.resetError();
     }
   }
 
+  @override
+  void dispose() {
+    _phoneController.dispose();
+    _animController.dispose();
+    // Remove listener to prevent memory leaks
+    if (mounted) {
+      context.read<AuthProvider>().removeListener(_onAuthStatusChanged);
+    }
+    super.dispose();
+  }
+
+  String? _validatePhone(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'Please enter your phone number';
+    }
+    final digits = value.replaceAll(RegExp(r'\D'), '');
+    if (digits.length < 10) {
+      return 'Please enter a valid 10-digit number';
+    }
+    return null;
+  }
+
+  void _sendOTP() {
+    if (!_formKey.currentState!.validate()) return;
+    FocusScope.of(context).unfocus();
+
+    final raw = _phoneController.text.replaceAll(RegExp(r'\D'), '');
+    final phone = '+91$raw';
+
+    print('📱 Sending OTP to: $phone');
+
+    // Fire and forget — listener handles navigation
+    context.read<AuthProvider>().sendOTP(phone);
+  }
+
   void _showError(String message) {
+    if (!mounted) return;
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(message),
         backgroundColor: AppColors.error,
         behavior: SnackBarBehavior.floating,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        margin: const EdgeInsets.all(16),
       ),
     );
   }
@@ -95,12 +123,12 @@ class _LoginScreenState extends State<LoginScreen>
                 children: [
                   const SizedBox(height: 60),
 
-                  // Hero Image / Icon
+                  // Blood drop icon
                   Center(
                     child: Container(
                       width: 120,
                       height: 120,
-                      decoration: BoxDecoration(
+                      decoration: const BoxDecoration(
                         color: AppColors.primaryLight,
                         shape: BoxShape.circle,
                       ),
@@ -115,8 +143,8 @@ class _LoginScreenState extends State<LoginScreen>
                   Text(
                     'Welcome to\nBloodBridge',
                     style: Theme.of(context).textTheme.displayMedium?.copyWith(
-                      fontWeight: FontWeight.w800,
-                    ),
+                          fontWeight: FontWeight.w800,
+                        ),
                   ),
                   const SizedBox(height: 10),
                   Text(
@@ -125,16 +153,19 @@ class _LoginScreenState extends State<LoginScreen>
                   ),
                   const SizedBox(height: 40),
 
-                  // Phone Field
+                  // Phone label
                   Text(
                     'Mobile Number',
                     style: Theme.of(context).textTheme.labelLarge,
                   ),
                   const SizedBox(height: 10),
+
+                  // Phone input
                   TextFormField(
                     controller: _phoneController,
                     keyboardType: TextInputType.phone,
                     maxLength: 10,
+                    enabled: !isLoading,
                     inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                     validator: _validatePhone,
                     style: const TextStyle(
@@ -171,19 +202,29 @@ class _LoginScreenState extends State<LoginScreen>
                   ElevatedButton(
                     onPressed: isLoading ? null : _sendOTP,
                     child: isLoading
-                        ? const SizedBox(
-                            height: 22,
-                            width: 22,
-                            child: CircularProgressIndicator(
-                              color: Colors.white,
-                              strokeWidth: 2.5,
-                            ),
+                        ? const Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              SizedBox(
+                                height: 20,
+                                width: 20,
+                                child: CircularProgressIndicator(
+                                  color: Colors.white,
+                                  strokeWidth: 2.5,
+                                ),
+                              ),
+                              SizedBox(width: 12),
+                              Text(
+                                'Sending OTP...',
+                                style: TextStyle(color: Colors.white),
+                              ),
+                            ],
                           )
                         : const Text('Send OTP'),
                   ),
                   const SizedBox(height: 24),
 
-                  // Terms text
+                  // Terms
                   Center(
                     child: Text(
                       'By continuing, you agree to our Terms of Service\nand Privacy Policy.',
@@ -194,10 +235,11 @@ class _LoginScreenState extends State<LoginScreen>
                           ?.copyWith(fontSize: 12),
                     ),
                   ),
-                  const SizedBox(height: 60),
+                  const SizedBox(height: 48),
 
-                  // Impact stats
+                  // Impact banner
                   _buildImpactBanner(),
+                  const SizedBox(height: 32),
                 ],
               ),
             ),
@@ -214,17 +256,17 @@ class _LoginScreenState extends State<LoginScreen>
         color: AppColors.primaryLight,
         borderRadius: BorderRadius.circular(16),
       ),
-      child: Column(
+      child: const Column(
         children: [
-          const Text(
+          Text(
             '💉  Did you know?',
             style: TextStyle(
               fontWeight: FontWeight.w700,
               color: AppColors.primaryDark,
             ),
           ),
-          const SizedBox(height: 8),
-          const Text(
+          SizedBox(height: 8),
+          Text(
             'Every 2 seconds someone in India needs blood. One donation can save up to 3 lives.',
             textAlign: TextAlign.center,
             style: TextStyle(

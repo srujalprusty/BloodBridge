@@ -37,11 +37,44 @@ class BloodBridgeApp extends StatelessWidget {
           '/login': (ctx) => const LoginScreen(),
           '/otp': (ctx) => const OtpScreen(),
           // TODO Day 2+: Add remaining routes
-          // '/complete-profile': (ctx) => const CompleteProfileScreen(),
+          '/complete-profile': (ctx) => const PlaceholderScreen(title: 'Complete Profile'),
           // '/home': (ctx) => const HomeScreen(),
           // '/map': (ctx) => const MapScreen(),
           // '/request': (ctx) => const CreateRequestScreen(),
         },
+      ),
+    );
+  }
+}
+class PlaceholderScreen extends StatelessWidget {
+  final String title;
+  const PlaceholderScreen({super.key, required this.title});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: const Color(0xFFC0392B),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            const Text('🩸', style: TextStyle(fontSize: 64)),
+            const SizedBox(height: 24),
+            Text(
+              title,
+              style: const TextStyle(
+                color: Colors.white,
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const SizedBox(height: 12),
+            const Text(
+              'Coming in Day 2!',
+              style: TextStyle(color: Colors.white70, fontSize: 16),
+            ),
+          ],
+        ),
       ),
     );
   }

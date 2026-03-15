@@ -30,11 +30,11 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  firebase_core: ^2.24.2
-  firebase_auth: ^4.16.0
-  cloud_firestore: ^4.14.0
-  firebase_messaging: ^14.7.10
-  firebase_storage: ^11.5.6
+  firebase_core: ^2.32.0
+  firebase_auth: ^4.20.0
+  cloud_firestore: ^4.17.5
+  firebase_messaging: ^14.9.4
+  firebase_storage: ^11.7.7
 
   # Maps & Location
   google_maps_flutter: ^2.5.3
@@ -45,7 +45,7 @@ dependencies:
   provider: ^6.1.1
 
   # UI & Utilities
-  flutter_local_notifications: ^16.3.0
+  flutter_local_notifications: ^17.2.4
   pinput: ^6.0.2             # OTP input field
   lottie: ^2.7.0            # Animations
   cached_network_image: ^3.3.1
